@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-emitter
+  namespace: default  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: kafka-emitter
+  template:
+    metadata:
+      labels:
+        run: kafka-emitter
+        app: kafka-emitter
+    spec:
+      containers:
+      - name: kafka-emitter
+        image: gcr.io/udemy-kubernetes-233602/kafka-emitter:latest
+        env:
+        - name: SPRING_APPLICATION_JSON
+          value: '{"kafka.bootstrapAddress":"my-kafka:9092"}'
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: "app"
+                operator: In
+                values: 
+                - kafka
+            topologyKey: "kubernetes.io/hostname"

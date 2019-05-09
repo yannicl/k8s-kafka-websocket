@@ -1,0 +1,29 @@
+affinity:
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: "app"
+            operator: In
+            values: 
+            - kafka
+        topologyKey: "kubernetes.io/hostname"
+  podAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+    - labelSelector:
+        matchExpressions:
+        - key: "app"
+          operator: In
+          values: 
+          - zookeeper
+      topologyKey: "kubernetes.io/hostname"
+zookeeper.affinity:
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: "app"
+            operator: In
+            values:
+            - zookeeper
+        topologyKey: "kubernetes.io/hostname

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-interaction
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: kafka-interaction
+  template:
+    metadata:
+      labels:
+        run: kafka-interaction
+        app: kafka-interaction
+    spec:
+      containers:
+      - name: kafka-interaction
+        image: gcr.io/udemy-kubernetes-233602/kafka-interaction:latest
+        env:
+        - name: SPRING_APPLICATION_JSON
+          value: '{"kafka.bootstrapAddress":"my-kafka:9092"}'
+        ports:
+        - containerPort: 8080
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: "app"
+                operator: In
+                values: 
+                - kafka-emitter
+            topologyKey: "kubernetes.io/hostname"
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: "app"
+                operator: In
+                values: 
+                - kafka
+            topologyKey: "kubernetes.io/hostname"
